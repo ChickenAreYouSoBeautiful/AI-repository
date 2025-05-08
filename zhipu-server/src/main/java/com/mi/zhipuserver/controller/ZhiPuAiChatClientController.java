@@ -1,5 +1,6 @@
 package com.mi.zhipuserver.controller;
 
+import com.mi.zhipuserver.model.dto.InMemory;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
@@ -9,10 +10,11 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.zhipuai.ZhiPuAiChatOptions;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+
+import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY;
+import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_RETRIEVE_SIZE_KEY;
 
 
 @RestController
@@ -48,6 +50,29 @@ public class ZhiPuAiChatClientController {
 								.build()
 				)
 				.build();
+	}
+
+	/**
+	 * Spring AI 提供的基于内存的 Chat Memory 实现
+	 */
+	@PostMapping("/in-memory")
+	public Flux<String> memory(
+			@RequestBody InMemory inMemory,
+			HttpServletResponse response
+	) {
+		String chatId = inMemory.getChatId();
+		String prompt = inMemory.getPrompt();
+
+		response.setCharacterEncoding("UTF-8");
+
+		return zhipuAiChatClient.prompt(prompt).advisors(
+				new MessageChatMemoryAdvisor(
+						new InMemoryChatMemory())
+		).advisors(
+				a -> a
+						.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId)
+						.param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 100)
+		).stream().content();
 	}
 
 	// 也可以使用如下的方式注入 ChatClient
