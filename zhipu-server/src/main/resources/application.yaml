@@ -4,7 +4,11 @@ server:
 spring:
   application:
     name: spring-ai-alibaba-zhipuai-chat-model-example
-
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:8091/ai_chat
+    username: root
+    password: yEPN{q1T}uVr4b68M=w.5jvX7!2?KkH9
   ai:
     zhipuai:
       base-url: "https://open.bigmodel.cn/api/paas"
