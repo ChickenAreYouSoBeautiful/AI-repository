@@ -5,7 +5,6 @@ import com.mi.zhipuserver.memory.DatabaseChatMemory;
 import com.mi.zhipuserver.model.dto.InMemory;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.ibatis.annotations.Result;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
